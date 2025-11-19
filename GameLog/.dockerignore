@@ -1,0 +1,12 @@
+.husky
+.coverage
+.node_modules
+api.http
+.gitignore
+/src/tests
+/src/serverTest.js
+/APIgRPC/env
+/APIgRPC/API/controllers/__pycache__
+.vagrant
+ubuntu-bionic-18.04-cloudimg-console.log
+

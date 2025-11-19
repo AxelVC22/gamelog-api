@@ -1,0 +1,13 @@
+/src/node_modules
+node_modules
+api.http
+logs
+coverage
+/APIgRPC/env
+/APIgRPC/API/controllers/__pycache__
+/APIgRPC/API/ficheros/fotosDePerfil/__pycache__
+sonar-project.properties
+.scannerwork
+.vagrant
+ubuntu-bionic-18.04-cloudimg-console.log
+
