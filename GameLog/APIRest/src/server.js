@@ -1,5 +1,6 @@
 import express, { json } from 'express';
 import { CrearRutaAcceso } from './api_rest/routes/AccesoRuta.js';
+import { CrearRutaAutenticacion } from './api_rest/routes/AutenticacionRuta.js';
 import { CrearRutaLogin } from './api_rest/routes/LoginRuta.js';
 import { CrearRutaJugador } from './api_rest/routes/JugadorRuta.js';
 import { CrearRutaJuego } from './api_rest/routes/JuegoRuta.js';
@@ -14,26 +15,26 @@ import swaggerUI from 'swagger-ui-express';
 import dotenv from 'dotenv';
 
 
-export const CrearServidor = ({ModeloAcceso, ModeloLogin,ModeloJugador,ModeloJuego,ModeloSeguidor,ModeloReseña,ModeloMeGusta,ModeloReportesEstadisticos,ModeloNotificacion}) => 
-{
+export const CrearServidor = ({ ModeloAcceso, ModeloLogin, ModeloJugador, ModeloJuego, ModeloSeguidor, ModeloReseña, ModeloMeGusta, ModeloReportesEstadisticos, ModeloNotificacion }) => {
     const app = express();
     dotenv.config();
     app.use(json());
     app.use(CorsMiddleware());
     app.disable('x-powered-by');
-    app.get('/gamelog',(req,res)=>{
-        res.json({message: 'Bienvenido al servidor de GameLogAPI'});
+    app.get('/gamelog', (req, res) => {
+        res.json({ message: 'Bienvenido al servidor de GameLogAPI' });
     });
-    app.use('/gamelog/login',CrearRutaLogin({ModeloLogin,ModeloAcceso}));
-    app.use('/gamelog/acceso', CrearRutaAcceso({ModeloAcceso}));
-    app.use('/gamelog/jugador',CrearRutaJugador({ModeloJugador}));
-    app.use('/gamelog/juego',CrearRutaJuego({ModeloJuego}));
-    app.use('/gamelog/seguidor',CrearRutaSeguidor({ModeloSeguidor}));
-    app.use('/gamelog/resena',CrearRutaReseña({ModeloReseña}));
-    app.use('/gamelog/MeGusta',CrearRutaMeGusta({ModeloMeGusta}));
-    app.use('/gamelog/reporte',CrearRutaReportesEstadisticos({ModeloReportesEstadisticos}));
-    app.use('/gamelog/notificacion',CrearRutaNotificacion({ModeloNotificacion}));
-    app.use('/gamelog/doc',swaggerUI.serve, swaggerUI.setup(DocumentoSwagger));
+    app.use('/gamelog/login', CrearRutaLogin({ ModeloLogin, ModeloAcceso }));
+    app.use('/gamelog/acceso', CrearRutaAcceso({ ModeloAcceso }));
+    app.use('/gamelog/autenticacion', CrearRutaAutenticacion());
+    app.use('/gamelog/jugador', CrearRutaJugador({ ModeloJugador }));
+    app.use('/gamelog/juego', CrearRutaJuego({ ModeloJuego }));
+    app.use('/gamelog/seguidor', CrearRutaSeguidor({ ModeloSeguidor }));
+    app.use('/gamelog/resena', CrearRutaReseña({ ModeloReseña }));
+    app.use('/gamelog/MeGusta', CrearRutaMeGusta({ ModeloMeGusta }));
+    app.use('/gamelog/reporte', CrearRutaReportesEstadisticos({ ModeloReportesEstadisticos }));
+    app.use('/gamelog/notificacion', CrearRutaNotificacion({ ModeloNotificacion }));
+    app.use('/gamelog/doc', swaggerUI.serve, swaggerUI.setup(DocumentoSwagger));
     const PUERTO = process.env.PUERTO;
     app.use((err, req, res, next) => {
         if (err.message === 'CORS Invalido') {
@@ -41,7 +42,7 @@ export const CrearServidor = ({ModeloAcceso, ModeloLogin,ModeloJugador,ModeloJue
         }
         next(err);
     });
-    app.listen(PUERTO,()=>{
+    app.listen(PUERTO, () => {
         console.log(`Servidor activo en la siguiente ruta http://localhost:${PUERTO}`);
     });
 }

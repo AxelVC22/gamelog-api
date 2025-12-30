@@ -2,19 +2,36 @@ import jwt from 'jsonwebtoken';
 import { logger } from './logger.js';
 
 export const GenerarJWT = (payload) => {
-    return new Promise((resolve, reject) => 
-    {
-        jwt.sign(payload,process.env.SECRETO_JWT,
+    return new Promise((resolve, reject) => {
+        jwt.sign(
+            payload, 
+            process.env.ACCESS_TOKEN_SECRET,
             {
-                expiresIn: '2h'
-            },(err, token) => 
-            {
-                if(err)
-                {
+                expiresIn: '30s'
+            }, 
+            (err, token) => {
+                if (err) {
                     logger(err);
-                    reject({Error: true});
+                    reject({ Error: true });
+                } else {
+                    resolve(token);
                 }
-                else{
+            }
+        );
+    });
+};
+
+export const GenerarRefreshToken = (DatosUsuario) => {
+    return new Promise((resolve, reject) => {
+        jwt.sign(
+            DatosUsuario,
+            process.env.REFRESH_TOKEN_SECRET, 
+            { expiresIn: '7d' },
+            (err, token) => {
+                if (err) {
+                    logger(err);
+                    reject({ Error: true });
+                } else {
                     resolve(token);
                 }
             }

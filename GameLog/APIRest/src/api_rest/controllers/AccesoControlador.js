@@ -40,11 +40,15 @@ export class AccesoControlador
             }
             else
             {
-                res.status(400).json({
-                    error: true,
-                    estado: 400,
-                    mensaje: 'Datos con formato inválido, por favor verifique los datos enviados.'
-                });
+                 return res.status(400).json({
+        error: true,
+        estado: 400,
+        mensaje: ' con formato inválido, por favor verifique los datos enviados.',
+        detalles: resultado.error.errors.map(err => ({
+            campo: err.path.join('.'),
+            mensaje: err.message
+        }))
+    });
             }
         }
         catch(error)
