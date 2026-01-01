@@ -4,8 +4,7 @@ import grpc
 import warnings
 
 from . import Fotos_De_Perfil_pb2 as Fotos__De__Perfil__pb2
-
-GRPC_GENERATED_VERSION = '1.71.0'
+GRPC_GENERATED_VERSION = '1.76.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -18,7 +17,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in Fotos_De_Perfil_pb2_grpc.py depends on'
+        + ' but the generated code in Fotos_De_Perfil_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -34,39 +33,39 @@ class FotosDePerfilStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.SubirFotoDeUsuario = channel.unary_unary(
-                '/FotosDePerfil/SubirFotoDeUsuario',
-                request_serializer=Fotos__De__Perfil__pb2.FotoDePerfilDatos.SerializeToString,
-                response_deserializer=Fotos__De__Perfil__pb2.FotoDePerfilRuta.FromString,
+        self.SubirFoto = channel.unary_unary(
+                '/FotosDePerfil/SubirFoto',
+                request_serializer=Fotos__De__Perfil__pb2.FotoRequest.SerializeToString,
+                response_deserializer=Fotos__De__Perfil__pb2.FotoResponse.FromString,
                 _registered_method=True)
-        self.ObtenerFotoDePerfilUsuario = channel.unary_unary(
-                '/FotosDePerfil/ObtenerFotoDePerfilUsuario',
-                request_serializer=Fotos__De__Perfil__pb2.FotoDePerfilRuta.SerializeToString,
-                response_deserializer=Fotos__De__Perfil__pb2.FotoDePerfilDatos.FromString,
+        self.ObtenerFoto = channel.unary_unary(
+                '/FotosDePerfil/ObtenerFoto',
+                request_serializer=Fotos__De__Perfil__pb2.FotoRequest.SerializeToString,
+                response_deserializer=Fotos__De__Perfil__pb2.FotoResponse.FromString,
                 _registered_method=True)
-        self.ActualizarFotoDePerfil = channel.unary_unary(
-                '/FotosDePerfil/ActualizarFotoDePerfil',
-                request_serializer=Fotos__De__Perfil__pb2.ActualizacionFotoDePerfil.SerializeToString,
-                response_deserializer=Fotos__De__Perfil__pb2.FotoDePerfilRuta.FromString,
+        self.ActualizarFoto = channel.unary_unary(
+                '/FotosDePerfil/ActualizarFoto',
+                request_serializer=Fotos__De__Perfil__pb2.FotoRequest.SerializeToString,
+                response_deserializer=Fotos__De__Perfil__pb2.FotoResponse.FromString,
                 _registered_method=True)
 
 
 class FotosDePerfilServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def SubirFotoDeUsuario(self, request, context):
+    def SubirFoto(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ObtenerFotoDePerfilUsuario(self, request, context):
+    def ObtenerFoto(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ActualizarFotoDePerfil(self, request, context):
+    def ActualizarFoto(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -75,20 +74,20 @@ class FotosDePerfilServicer(object):
 
 def add_FotosDePerfilServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'SubirFotoDeUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.SubirFotoDeUsuario,
-                    request_deserializer=Fotos__De__Perfil__pb2.FotoDePerfilDatos.FromString,
-                    response_serializer=Fotos__De__Perfil__pb2.FotoDePerfilRuta.SerializeToString,
+            'SubirFoto': grpc.unary_unary_rpc_method_handler(
+                    servicer.SubirFoto,
+                    request_deserializer=Fotos__De__Perfil__pb2.FotoRequest.FromString,
+                    response_serializer=Fotos__De__Perfil__pb2.FotoResponse.SerializeToString,
             ),
-            'ObtenerFotoDePerfilUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.ObtenerFotoDePerfilUsuario,
-                    request_deserializer=Fotos__De__Perfil__pb2.FotoDePerfilRuta.FromString,
-                    response_serializer=Fotos__De__Perfil__pb2.FotoDePerfilDatos.SerializeToString,
+            'ObtenerFoto': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtenerFoto,
+                    request_deserializer=Fotos__De__Perfil__pb2.FotoRequest.FromString,
+                    response_serializer=Fotos__De__Perfil__pb2.FotoResponse.SerializeToString,
             ),
-            'ActualizarFotoDePerfil': grpc.unary_unary_rpc_method_handler(
-                    servicer.ActualizarFotoDePerfil,
-                    request_deserializer=Fotos__De__Perfil__pb2.ActualizacionFotoDePerfil.FromString,
-                    response_serializer=Fotos__De__Perfil__pb2.FotoDePerfilRuta.SerializeToString,
+            'ActualizarFoto': grpc.unary_unary_rpc_method_handler(
+                    servicer.ActualizarFoto,
+                    request_deserializer=Fotos__De__Perfil__pb2.FotoRequest.FromString,
+                    response_serializer=Fotos__De__Perfil__pb2.FotoResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -102,7 +101,7 @@ class FotosDePerfil(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def SubirFotoDeUsuario(request,
+    def SubirFoto(request,
             target,
             options=(),
             channel_credentials=None,
@@ -115,9 +114,9 @@ class FotosDePerfil(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/FotosDePerfil/SubirFotoDeUsuario',
-            Fotos__De__Perfil__pb2.FotoDePerfilDatos.SerializeToString,
-            Fotos__De__Perfil__pb2.FotoDePerfilRuta.FromString,
+            '/FotosDePerfil/SubirFoto',
+            Fotos__De__Perfil__pb2.FotoRequest.SerializeToString,
+            Fotos__De__Perfil__pb2.FotoResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -129,7 +128,7 @@ class FotosDePerfil(object):
             _registered_method=True)
 
     @staticmethod
-    def ObtenerFotoDePerfilUsuario(request,
+    def ObtenerFoto(request,
             target,
             options=(),
             channel_credentials=None,
@@ -142,9 +141,9 @@ class FotosDePerfil(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/FotosDePerfil/ObtenerFotoDePerfilUsuario',
-            Fotos__De__Perfil__pb2.FotoDePerfilRuta.SerializeToString,
-            Fotos__De__Perfil__pb2.FotoDePerfilDatos.FromString,
+            '/FotosDePerfil/ObtenerFoto',
+            Fotos__De__Perfil__pb2.FotoRequest.SerializeToString,
+            Fotos__De__Perfil__pb2.FotoResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -156,7 +155,7 @@ class FotosDePerfil(object):
             _registered_method=True)
 
     @staticmethod
-    def ActualizarFotoDePerfil(request,
+    def ActualizarFoto(request,
             target,
             options=(),
             channel_credentials=None,
@@ -169,9 +168,9 @@ class FotosDePerfil(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/FotosDePerfil/ActualizarFotoDePerfil',
-            Fotos__De__Perfil__pb2.ActualizacionFotoDePerfil.SerializeToString,
-            Fotos__De__Perfil__pb2.FotoDePerfilRuta.FromString,
+            '/FotosDePerfil/ActualizarFoto',
+            Fotos__De__Perfil__pb2.FotoRequest.SerializeToString,
+            Fotos__De__Perfil__pb2.FotoResponse.FromString,
             options,
             channel_credentials,
             insecure,
