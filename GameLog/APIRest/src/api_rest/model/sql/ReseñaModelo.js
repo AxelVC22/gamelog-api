@@ -18,6 +18,7 @@ export class ModeloReseña
                 .input('idJuego',sql.Int,idJuego)
                 .input('opinion',sql.VarChar,opinion)
                 .input('calificacion',sql.Decimal(3,1),calificacion)
+                .output('idResenia',sql.Int)
                 .output('estado',sql.Int)
                 .output('mensaje',sql.VarChar)
                 .execute('spi_Reseña');

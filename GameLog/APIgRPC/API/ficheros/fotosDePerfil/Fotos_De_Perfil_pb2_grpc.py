@@ -4,6 +4,7 @@ import grpc
 import warnings
 
 from . import Fotos_De_Perfil_pb2 as Fotos__De__Perfil__pb2
+
 GRPC_GENERATED_VERSION = '1.76.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
@@ -48,6 +49,11 @@ class FotosDePerfilStub(object):
                 request_serializer=Fotos__De__Perfil__pb2.FotoRequest.SerializeToString,
                 response_deserializer=Fotos__De__Perfil__pb2.FotoResponse.FromString,
                 _registered_method=True)
+        self.ObtenerMultiplesFotos = channel.unary_unary(
+                '/FotosDePerfil/ObtenerMultiplesFotos',
+                request_serializer=Fotos__De__Perfil__pb2.MultipleFotosRequest.SerializeToString,
+                response_deserializer=Fotos__De__Perfil__pb2.MultipleFotosResponse.FromString,
+                _registered_method=True)
 
 
 class FotosDePerfilServicer(object):
@@ -71,6 +77,12 @@ class FotosDePerfilServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ObtenerMultiplesFotos(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_FotosDePerfilServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -88,6 +100,11 @@ def add_FotosDePerfilServicer_to_server(servicer, server):
                     servicer.ActualizarFoto,
                     request_deserializer=Fotos__De__Perfil__pb2.FotoRequest.FromString,
                     response_serializer=Fotos__De__Perfil__pb2.FotoResponse.SerializeToString,
+            ),
+            'ObtenerMultiplesFotos': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtenerMultiplesFotos,
+                    request_deserializer=Fotos__De__Perfil__pb2.MultipleFotosRequest.FromString,
+                    response_serializer=Fotos__De__Perfil__pb2.MultipleFotosResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -171,6 +188,33 @@ class FotosDePerfil(object):
             '/FotosDePerfil/ActualizarFoto',
             Fotos__De__Perfil__pb2.FotoRequest.SerializeToString,
             Fotos__De__Perfil__pb2.FotoResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtenerMultiplesFotos(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/FotosDePerfil/ObtenerMultiplesFotos',
+            Fotos__De__Perfil__pb2.MultipleFotosRequest.SerializeToString,
+            Fotos__De__Perfil__pb2.MultipleFotosResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -21,9 +21,9 @@ export class LoginControlador {
 
             if (ResultadoValidacion.success) {
                 if (UsuariosActivos[correo]) {
-                    return res.status(401).json({
+                    return res.status(403).json({
                         error: true,
-                        estado: 401,
+                        estado: 403,
                         mensaje: 'El usuario ya tiene una sesión activa, cierre sesión desde el otro dispositivo para iniciar sesión aquí.'
                     });
                 }
@@ -37,9 +37,9 @@ export class LoginControlador {
 
                 if (resultadoConsulta === 200) {
                     if (ResultadoConsulta.cuenta[0].estado === "Baneado") {
-                        return res.status(401).json({
+                        return res.status(403).json({
                             error: false,
-                            estado: 401,
+                            estado: 403,
                             mensaje: "Su cuenta se encuentra en lista negra, no es posible acceder a la aplicación."
                         });
                     }

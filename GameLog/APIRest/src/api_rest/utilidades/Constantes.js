@@ -10,8 +10,8 @@ export function ErrorEnLaBaseDeDatosInsercion()
 
 export function MensajeDeRetornoBaseDeDatos({datos})
 {
-    const { estado, mensaje } = datos;
-    return { estado, mensaje };
+    const { idResenia,estado, mensaje } = datos;
+    return { idResenia, estado, mensaje };
 }
 
 export function MensajeDeRetornoBaseDeDatosAcceso({datos})

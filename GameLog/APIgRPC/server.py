@@ -3,27 +3,48 @@ import os
 from dotenv import load_dotenv
 from concurrent import futures
 from API.controllers.FotosDePerfilControlador import FotosDePerfilControlador 
+from API.controllers.MultimediaDeReseniaControlador import MultimediaDeReseniaControlador 
 from API.ficheros.fotosDePerfil import Fotos_De_Perfil_pb2_grpc
+from API.ficheros.multimediaResenia import Multimedia_De_Resenia_pb2_grpc
 
 load_dotenv()
 
-if not os.path.exists(os.getenv("DIRECTORIO_FOTOS")):
-    os.makedirs(os.getenv("DIRECTORIO_FOTOS"))
+REQUIRED_ENV_VARS = [
+    "DIRECTORIO_FOTOS",
+    "RUTAFOTOPORDEFECTO",
+    "DIRECTORIO_MULTIMEDIA_RESENIAS",
+    "PUERTO_SERVIDOR",
+]
 
-if not os.path.exists(os.getenv("RUTAFOTOPORDEFECTO")):
-    raise ValueError(f"La foto por defecto no existe: {os.getenv('RUTAFOTOPORDEFECTO')}")
+for var in REQUIRED_ENV_VARS:
+    if not os.getenv(var):
+        raise ValueError(f"Variable de entorno faltante: {var}")
+
+os.makedirs(os.getenv("DIRECTORIO_FOTOS"), exist_ok=True)
+os.makedirs(os.getenv("DIRECTORIO_MULTIMEDIA_RESENIAS"), exist_ok=True)
+
+ruta_default = os.getenv("RUTAFOTOPORDEFECTO")
+if not os.path.exists(ruta_default):
+    raise ValueError(f"La foto por defecto no existe: {ruta_default}")
+
+
 
 def serve():
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10),
         options=[
-            ("grpc.max_send_message_length", 5 * 1024 * 1024), 
-            ("grpc.max_receive_message_length", 5 * 1024 * 1024)
+            ("grpc.max_send_message_length", 50 * 1024 * 1024),
+            ("grpc.max_receive_message_length", 50 * 1024 * 1024)
         ]
     )
     
     Fotos_De_Perfil_pb2_grpc.add_FotosDePerfilServicer_to_server(
         FotosDePerfilControlador(),
+        server
+    )
+
+    Multimedia_De_Resenia_pb2_grpc.add_ReviewMultimediaServicer_to_server(
+        MultimediaDeReseniaControlador(),
         server
     )
     

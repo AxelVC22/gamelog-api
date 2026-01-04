@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+// ========== FOTOS (COMPLETAS) ==========
+message SubirFotoRequest {
+  string idReview = 1;
+  int32 indice = 2;          // 1, 2 o 3
+  string extension = 3;       // "jpg", "png"
+  bytes datos = 4;            // Foto completa
+}
+
+message SubirFotoResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ========== VIDEOS (POR CHUNKS) ==========
+message ChunkVideoRequest {
+  string idReview = 1;
+  string extension = 2;       // "mp4"
+  bytes chunk = 3;            // Pedazo de video
+  int32 chunkIndex = 4;       // Número del pedazo (0, 1, 2...)
+  int32 totalChunks = 5;      // Total de pedazos
+}
+
+message SubirVideoResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ========== OBTENER ==========
+message ObtenerFotosRequest {
+  string idReview = 1;
+}
+
+message FotoReviewInfo {
+  int32 indice = 1;
+  bytes datos = 2;
+}
+
+message ObtenerFotosResponse {
+  repeated FotoReviewInfo fotos = 1;
+  string idReview = 2;
+}
+
+message ObtenerVideoRequest {
+  string idReview = 1;
+}
+
+message VideoChunk {
+  bytes chunk = 1;
+  int32 chunkIndex = 2;
+  int32 totalChunks = 3;
+}
+
+// ========== OTROS ==========
+message ObtenerMetadataRequest {
+  string idReview = 1;
+}
+
+message MetadataResponse {
+  int32 numFotos = 1;
+  int32 numVideos = 2;
+}
+
+message EliminarArchivosRequest {
+  string idReview = 1;
+}
+
+message EliminarArchivosResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ========== SERVICIO ==========
+service ReviewMultimedia {
+  // Fotos: unary (normal)
+  rpc SubirFoto(SubirFotoRequest) returns (SubirFotoResponse);
+  rpc ObtenerFotos(ObtenerFotosRequest) returns (ObtenerFotosResponse);
+  
+  // Videos: streaming
+  rpc SubirVideo(stream ChunkVideoRequest) returns (SubirVideoResponse);
+  rpc ObtenerVideo(ObtenerVideoRequest) returns (stream VideoChunk);
+  
+  // Otros
+  rpc ObtenerMetadata(ObtenerMetadataRequest) returns (MetadataResponse);
+  rpc EliminarArchivos(EliminarArchivosRequest) returns (EliminarArchivosResponse);
+}

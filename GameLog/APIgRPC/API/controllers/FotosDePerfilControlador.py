@@ -1,9 +1,56 @@
-# API/controllers/FotosDePerfilControlador.py
 import grpc
 import os
 from ..ficheros.fotosDePerfil import Fotos_De_Perfil_pb2, Fotos_De_Perfil_pb2_grpc
 
 class FotosDePerfilControlador(Fotos_De_Perfil_pb2_grpc.FotosDePerfilServicer):
+
+    def ObtenerMultiplesFotos(self, request, context):
+        """Obtiene fotos de múltiples usuarios eficientemente"""
+        idsJugadores = request.idsJugadores
+        fotos = []
+        foto_default_bytes = None
+        
+        try:
+            rutaFotoDefault = os.getenv("RUTAFOTOPORDEFECTO")
+            with open(rutaFotoDefault, "rb") as archivo:
+                foto_default_bytes = archivo.read()
+        except Exception:
+            foto_default_bytes = b""
+        
+        for idJugador in idsJugadores:
+            rutaImagen, existe = self._buscar_foto_usuario(idJugador)
+            
+            if existe:
+                try:
+                    with open(rutaImagen, "rb") as archivo:
+                        datos = archivo.read()
+                    
+                    fotos.append(Fotos_De_Perfil_pb2.FotoInfo(
+                        idJugador=idJugador,
+                        datos=datos,
+                        tieneFoto=True
+                    ))
+                except Exception:
+                    fotos.append(Fotos_De_Perfil_pb2.FotoInfo(
+                        idJugador=idJugador,
+                        datos=b"",
+                        tieneFoto=False
+                    ))
+            else:
+                fotos.append(Fotos_De_Perfil_pb2.FotoInfo(
+                    idJugador=idJugador,
+                    datos=b"",  
+                    tieneFoto=False
+                ))
+        
+        context.set_code(grpc.StatusCode.OK)
+        context.set_details("Fotos obtenidas correctamente")
+        
+        return Fotos_De_Perfil_pb2.MultipleFotosResponse(
+            fotos=fotos,
+            fotoDefault=foto_default_bytes  
+        )
+    
     
     def _buscar_foto_usuario(self, id_jugador):
         """Busca foto del usuario con extensión .jpg, .jpeg o .png"""
@@ -28,7 +75,6 @@ class FotosDePerfilControlador(Fotos_De_Perfil_pb2_grpc.FotosDePerfilServicer):
         elif datos_imagen.startswith(b'\xff\xd8\xff'):
             return '.jpg'
         else:
-            # Default a jpg si no se puede detectar
             return '.jpg'
     
     def _eliminar_fotos_antiguas(self, id_jugador, excepto_ruta):
@@ -45,24 +91,21 @@ class FotosDePerfilControlador(Fotos_De_Perfil_pb2_grpc.FotosDePerfilServicer):
                     pass
     
     def SubirFoto(self, request, context):
+        """Sube una nueva foto de perfil para el usuario (.jpg o .png)"""
         idJugador = request.idJugador
         datosImagen = request.datos
         directorio = os.getenv("DIRECTORIO_FOTOS")
         
-        # Detectar extensión automáticamente
         extension = self._detectar_extension(datosImagen)
         rutaFinalArchivo = os.path.join(directorio, f"{idJugador}{extension}")
 
         try:
-            # Eliminar foto anterior si existe y no es la default
             if os.path.exists(rutaFinalArchivo):
                 if os.path.abspath(rutaFinalArchivo) != os.path.abspath(os.getenv("RUTAFOTOPORDEFECTO")):
                     os.remove(rutaFinalArchivo)
             
-            # Eliminar fotos con otras extensiones
             self._eliminar_fotos_antiguas(idJugador, rutaFinalArchivo)
             
-            # Guardar la nueva foto
             with open(rutaFinalArchivo, "wb") as archivo:
                 archivo.write(datosImagen)
                 
@@ -90,12 +133,10 @@ class FotosDePerfilControlador(Fotos_De_Perfil_pb2_grpc.FotosDePerfilServicer):
     def ObtenerFoto(self, request, context):
         idJugador = request.idJugador
         
-        # Buscar foto del usuario
         rutaImagen, existe = self._buscar_foto_usuario(idJugador)
         
         try:
             if existe:
-                # Foto del usuario encontrada
                 with open(rutaImagen, "rb") as archivo:
                     datos = archivo.read()
                 
@@ -109,7 +150,6 @@ class FotosDePerfilControlador(Fotos_De_Perfil_pb2_grpc.FotosDePerfilServicer):
                     esDefault=False
                 )
             else:
-                # Devolver foto por defecto
                 rutaFotoDefault = os.getenv("RUTAFOTOPORDEFECTO")
                 
                 with open(rutaFotoDefault, "rb") as archivo:
@@ -147,5 +187,9 @@ class FotosDePerfilControlador(Fotos_De_Perfil_pb2_grpc.FotosDePerfilServicer):
             )
     
     def ActualizarFoto(self, request, context):
-        # Actualizar es lo mismo que subir (sobrescribe)
         return self.SubirFoto(request, context)
+    
+    
+    
+
+    

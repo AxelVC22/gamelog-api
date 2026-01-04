@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x46otos_De_Perfil.proto\"/\n\x0b\x46otoRequest\x12\x11\n\tidJugador\x18\x01 \x01(\t\x12\r\n\x05\x64\x61tos\x18\x02 \x01(\x0c\"e\n\x0c\x46otoResponse\x12\x11\n\tidJugador\x18\x01 \x01(\t\x12\r\n\x05\x64\x61tos\x18\x02 \x01(\x0c\x12\x0f\n\x07success\x18\x03 \x01(\x08\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x11\n\tesDefault\x18\x05 \x01(\x08\x32\x94\x01\n\rFotosDePerfil\x12(\n\tSubirFoto\x12\x0c.FotoRequest\x1a\r.FotoResponse\x12*\n\x0bObtenerFoto\x12\x0c.FotoRequest\x1a\r.FotoResponse\x12-\n\x0e\x41\x63tualizarFoto\x12\x0c.FotoRequest\x1a\r.FotoResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x46otos_De_Perfil.proto\"/\n\x0b\x46otoRequest\x12\x11\n\tidJugador\x18\x01 \x01(\t\x12\r\n\x05\x64\x61tos\x18\x02 \x01(\x0c\"e\n\x0c\x46otoResponse\x12\x11\n\tidJugador\x18\x01 \x01(\t\x12\r\n\x05\x64\x61tos\x18\x02 \x01(\x0c\x12\x0f\n\x07success\x18\x03 \x01(\x08\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x11\n\tesDefault\x18\x05 \x01(\x08\",\n\x14MultipleFotosRequest\x12\x14\n\x0cidsJugadores\x18\x01 \x03(\t\"?\n\x08\x46otoInfo\x12\x11\n\tidJugador\x18\x01 \x01(\t\x12\r\n\x05\x64\x61tos\x18\x02 \x01(\x0c\x12\x11\n\ttieneFoto\x18\x03 \x01(\x08\"F\n\x15MultipleFotosResponse\x12\x18\n\x05\x66otos\x18\x01 \x03(\x0b\x32\t.FotoInfo\x12\x13\n\x0b\x66otoDefault\x18\x02 \x01(\x0c\x32\xdc\x01\n\rFotosDePerfil\x12(\n\tSubirFoto\x12\x0c.FotoRequest\x1a\r.FotoResponse\x12*\n\x0bObtenerFoto\x12\x0c.FotoRequest\x1a\r.FotoResponse\x12-\n\x0e\x41\x63tualizarFoto\x12\x0c.FotoRequest\x1a\r.FotoResponse\x12\x46\n\x15ObtenerMultiplesFotos\x12\x15.MultipleFotosRequest\x1a\x16.MultipleFotosResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,6 +35,12 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_FOTOREQUEST']._serialized_end=72
   _globals['_FOTORESPONSE']._serialized_start=74
   _globals['_FOTORESPONSE']._serialized_end=175
-  _globals['_FOTOSDEPERFIL']._serialized_start=178
-  _globals['_FOTOSDEPERFIL']._serialized_end=326
+  _globals['_MULTIPLEFOTOSREQUEST']._serialized_start=177
+  _globals['_MULTIPLEFOTOSREQUEST']._serialized_end=221
+  _globals['_FOTOINFO']._serialized_start=223
+  _globals['_FOTOINFO']._serialized_end=286
+  _globals['_MULTIPLEFOTOSRESPONSE']._serialized_start=288
+  _globals['_MULTIPLEFOTOSRESPONSE']._serialized_end=358
+  _globals['_FOTOSDEPERFIL']._serialized_start=361
+  _globals['_FOTOSDEPERFIL']._serialized_end=581
 # @@protoc_insertion_point(module_scope)
