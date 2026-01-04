@@ -39,7 +39,8 @@ export class ReseñaControlador
                     res.status(resultadoInsercion).json({
                         error: resultadoInsercion !== 200,
                         estado: resultadoInsercion,
-                        mensaje: ResultadoInsercion.mensaje
+                        mensaje: ResultadoInsercion.mensaje,
+                        idResenia: ResultadoInsercion.idResenia
                     });
                 }
             }

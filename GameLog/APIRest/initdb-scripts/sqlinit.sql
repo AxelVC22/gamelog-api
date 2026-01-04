@@ -1294,39 +1294,71 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 CREATE PROCEDURE [dbo].[spi_Reseña]
-	@idJugador INT,
-	@idJuego INT,
-	@opinion VARCHAR(200),
-	@calificacion DECIMAL(3,1),
-	@estado INT OUTPUT,
-	@mensaje VARCHAR(MAX) OUTPUT
+    @idJugador INT,
+    @idJuego INT,
+    @opinion VARCHAR(200),
+    @calificacion DECIMAL(3,1),
+    @idResenia INT OUTPUT,   
+    @estado INT OUTPUT,
+    @mensaje VARCHAR(MAX) OUTPUT
 AS
 BEGIN
-	BEGIN TRY
-		IF NOT EXISTS (SELECT * FROM Reseñas WHERE idJugador = @idJugador AND idJuego = @idJuego)
-		BEGIN
-			BEGIN TRANSACTION
-				INSERT INTO Reseñas (idJugador,idJuego,fecha,opinion,calificacion) VALUES (@idJugador,@idJuego,CAST(GETDATE() AS DATE),@opinion,@calificacion);
-				DELETE FROM Pendientes WHERE idJuego = @idJuego AND idJugador = @idJugador;
-			COMMIT TRANSACTION
-			SET @estado = 200;
-			SET @mensaje = 'Se ha registrado la reseña de manera correcta.';
-		END
-		ELSE
-		BEGIN
-			SET @estado = 400;
-			SET @mensaje = 'Ya ha realizado una reseña para el juego seleccionado.';
-		END
-	END TRY
-	BEGIN CATCH
-		ROLLBACK TRANSACTION;
-		SET @estado = 500;
-		SET @mensaje = 'Error: '+ERROR_MESSAGE();
-	END CATCH
+    BEGIN TRY
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM Reseñas 
+            WHERE idJugador = @idJugador 
+              AND idJuego = @idJuego
+        )
+        BEGIN
+            BEGIN TRANSACTION
+
+                INSERT INTO Reseñas (
+                    idJugador,
+                    idJuego,
+                    fecha,
+                    opinion,
+                    calificacion
+                )
+                VALUES (
+                    @idJugador,
+                    @idJuego,
+                    CAST(GETDATE() AS DATE),
+                    @opinion,
+                    @calificacion
+                );
+
+                SET @idResenia = SCOPE_IDENTITY();
+
+                DELETE 
+                FROM Pendientes 
+                WHERE idJuego = @idJuego 
+                  AND idJugador = @idJugador;
+
+            COMMIT TRANSACTION
+
+            SET @estado = 200;
+            SET @mensaje = 'Se ha registrado la reseña de manera correcta.';
+        END
+        ELSE
+        BEGIN
+            SET @estado = 400;
+            SET @mensaje = 'Ya ha realizado una reseña para el juego seleccionado.';
+            SET @idResenia = NULL;
+        END
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        SET @estado = 500;
+        SET @mensaje = 'Error: ' + ERROR_MESSAGE();
+        SET @idResenia = NULL;
+    END CATCH
 END
 GO
+
 /****** Object:  StoredProcedure [dbo].[spi_Seguidor]    Script Date: 14/05/2025 06:12:20 p. m. ******/
 SET ANSI_NULLS ON
 GO

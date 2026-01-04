@@ -1,26 +1,40 @@
 syntax = "proto3";
 
-message FotoDePerfilDatos
-{
-    string idJugador = 1;
-    bytes datos = 2;
+message FotoRequest {
+string idJugador = 1;
+bytes datos = 2;
 }
 
-message ActualizacionFotoDePerfil
-{
-    string idJugador = 1;
-    string rutaImagenAntigua = 2;
-    bytes datos = 3;
+message FotoResponse {
+string idJugador = 1;
+bytes datos = 2;
+bool success = 3;
+string message = 4;
+bool esDefault = 5;
 }
 
-message FotoDePerfilRuta
-{
-    string rutaArchivo = 1;
+message MultipleFotosRequest {
+repeated string idsJugadores = 1;
 }
 
-service FotosDePerfil
-{
-    rpc SubirFotoDeUsuario(FotoDePerfilDatos) returns (FotoDePerfilRuta);
-    rpc ObtenerFotoDePerfilUsuario(FotoDePerfilRuta) returns (FotoDePerfilDatos);
-    rpc ActualizarFotoDePerfil(ActualizacionFotoDePerfil) returns (FotoDePerfilRuta);
+message FotoInfo {
+string idJugador = 1;
+bytes datos = 2;
+bool tieneFoto = 3;
+}
+
+message MultipleFotosResponse {
+repeated FotoInfo fotos = 1;
+bytes fotoDefault = 2;
+}
+
+service FotosDePerfil {
+rpc SubirFoto(FotoRequest) returns (FotoResponse);
+
+rpc ObtenerFoto(FotoRequest) returns (FotoResponse);
+
+rpc ActualizarFoto(FotoRequest) returns (FotoResponse);
+
+rpc ObtenerMultiplesFotos(MultipleFotosRequest) returns (MultipleFotosResponse);
+
 }
