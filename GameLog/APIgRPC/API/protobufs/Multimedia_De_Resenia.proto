@@ -1,11 +1,10 @@
 syntax = "proto3";
 
-// ========== FOTOS (COMPLETAS) ==========
 message SubirFotoRequest {
   string idReview = 1;
-  int32 indice = 2;          // 1, 2 o 3
-  string extension = 3;       // "jpg", "png"
-  bytes datos = 4;            // Foto completa
+  int32 indice = 2;         
+  string extension = 3;      
+  bytes datos = 4;            
 }
 
 message SubirFotoResponse {
@@ -13,13 +12,12 @@ message SubirFotoResponse {
   string message = 2;
 }
 
-// ========== VIDEOS (POR CHUNKS) ==========
 message ChunkVideoRequest {
   string idReview = 1;
-  string extension = 2;       // "mp4"
-  bytes chunk = 3;            // Pedazo de video
-  int32 chunkIndex = 4;       // Número del pedazo (0, 1, 2...)
-  int32 totalChunks = 5;      // Total de pedazos
+  string extension = 2;       
+  bytes chunk = 3;           
+  int32 chunkIndex = 4;      
+  int32 totalChunks = 5;     
 }
 
 message SubirVideoResponse {
@@ -27,7 +25,6 @@ message SubirVideoResponse {
   string message = 2;
 }
 
-// ========== OBTENER ==========
 message ObtenerFotosRequest {
   string idReview = 1;
 }
@@ -52,7 +49,6 @@ message VideoChunk {
   int32 totalChunks = 3;
 }
 
-// ========== OTROS ==========
 message ObtenerMetadataRequest {
   string idReview = 1;
 }
@@ -71,17 +67,13 @@ message EliminarArchivosResponse {
   string message = 2;
 }
 
-// ========== SERVICIO ==========
 service ReviewMultimedia {
-  // Fotos: unary (normal)
   rpc SubirFoto(SubirFotoRequest) returns (SubirFotoResponse);
   rpc ObtenerFotos(ObtenerFotosRequest) returns (ObtenerFotosResponse);
   
-  // Videos: streaming
   rpc SubirVideo(stream ChunkVideoRequest) returns (SubirVideoResponse);
   rpc ObtenerVideo(ObtenerVideoRequest) returns (stream VideoChunk);
   
-  // Otros
   rpc ObtenerMetadata(ObtenerMetadataRequest) returns (MetadataResponse);
   rpc EliminarArchivos(EliminarArchivosRequest) returns (EliminarArchivosResponse);
 }

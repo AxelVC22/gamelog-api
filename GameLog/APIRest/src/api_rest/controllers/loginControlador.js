@@ -16,79 +16,91 @@ export class LoginControlador {
     Login = async (req, res) => {
         try {
             const { correo, contrasenia, tipoDeUsuario } = req.body;
-            const Datos = { correo, contrasenia, tipoDeUsuario };
-            const ResultadoValidacion = ValidarDatosLoginIngresados(Datos);
 
-            if (ResultadoValidacion.success) {
-                if (UsuariosActivos[correo]) {
-                    return res.status(403).json({
-                        error: true,
-                        estado: 403,
-                        mensaje: 'El usuario ya tiene una sesión activa, cierre sesión desde el otro dispositivo para iniciar sesión aquí.'
-                    });
-                }
+            const validacion = ValidarDatosLoginIngresados({
+                correo,
+                contrasenia,
+                tipoDeUsuario
+            });
 
-                const ResultadoConsulta = await this.modeloLogin.Login({
-                    datos: ResultadoValidacion.data,
-                    tipoDeUsuario: ResultadoValidacion.data.tipoDeUsuario
-                });
-
-                let resultadoConsulta = parseInt(ResultadoConsulta.estado);
-
-                if (resultadoConsulta === 200) {
-                    if (ResultadoConsulta.cuenta[0].estado === "Baneado") {
-                        return res.status(403).json({
-                            error: false,
-                            estado: 403,
-                            mensaje: "Su cuenta se encuentra en lista negra, no es posible acceder a la aplicación."
-                        });
-                    }
-
-                    const tipoDeUsuario = ResultadoConsulta.cuenta[0].tipoDeAcceso;
-                    const nombreDeUsuario = ResultadoConsulta.cuenta[0].nombreDeUsuario;
-                    const DatosUsuario = { correo, tipoDeUsuario, nombreDeUsuario };
-
-                    const accessToken = await GenerarJWT(DatosUsuario);
-                    const refreshToken = await GenerarRefreshToken({ correo });
-
-                    UsuariosActivos[correo] = {
-                        tipoDeUsuario,
-                        nombreDeUsuario,  
-                        accessToken,
-                        refreshToken
-                    };
-
-
-                    res.status(200).json({
-                        error: false,
-                        estado: resultadoConsulta,
-                        cuenta: ResultadoConsulta.cuenta,
-                        access_token: accessToken,
-                        refresh_token: refreshToken
-                    });
-                } else {
-                    res.status(resultadoConsulta).json({
-                        error: true,
-                        estado: resultadoConsulta,
-                        mensaje: ResultadoConsulta.mensaje
-                    });
-                }
-            } else {
-                res.status(400).json({
+            if (!validacion.success) {
+                return res.status(400).json({
                     error: true,
                     estado: 400,
-                    mensaje: 'Datos con formato inválido, por favor verifique los datos enviados.'
+                    mensaje: 'Datos con formato inválido.'
                 });
             }
+
+            const resultado = await this.modeloLogin.Login({
+                datos: validacion.data,
+                tipoDeUsuario: validacion.data.tipoDeUsuario
+            });
+
+            const estado = parseInt(resultado.estado);
+
+            if (estado !== 200) {
+                return res.status(estado).json({
+                    error: true,
+                    estado,
+                    mensaje: resultado.mensaje
+                });
+            }
+
+            const cuenta = resultado.cuenta[0];
+
+            if (cuenta.estado === 'Baneado') {
+                delete UsuariosActivos[correo];
+
+                return res.status(403).json({
+                    error: true,
+                    estado: 403,
+                    mensaje: 'Su cuenta se encuentra en lista negra.'
+                });
+            }
+
+            if (UsuariosActivos[correo]) {
+                return res.status(403).json({
+                    error: true,
+                    estado: 403,
+                    mensaje:
+                        'El usuario ya tiene una sesión activa, cierre sesión desde el otro dispositivo.'
+                });
+            }
+
+            const datosUsuario = {
+                correo,
+                tipoDeUsuario: cuenta.tipoDeAcceso,
+                nombreDeUsuario: cuenta.nombreDeUsuario
+            };
+
+            const accessToken = await GenerarJWT(datosUsuario);
+            const refreshToken = await GenerarRefreshToken({ correo });
+
+            UsuariosActivos[correo] = {
+                tipoDeUsuario: datosUsuario.tipoDeUsuario,
+                nombreDeUsuario: datosUsuario.nombreDeUsuario,
+                accessToken,
+                refreshToken
+            };
+
+            return res.status(200).json({
+                error: false,
+                estado: 200,
+                cuenta: resultado.cuenta,
+                access_token: accessToken,
+                refresh_token: refreshToken
+            });
+
         } catch (error) {
             logger({ mensaje: error });
-            res.status(500).json({
+            return res.status(500).json({
                 error: true,
                 estado: 500,
                 mensaje: 'Ha ocurrido un error al obtener los datos del usuario.'
             });
         }
-    }
+    };
+
 
     LogOut = (req, res) => {
         try {

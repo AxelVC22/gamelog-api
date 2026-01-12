@@ -8,16 +8,15 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
     EXTENSIONES_FOTO = {'jpg', 'jpeg', 'png'}
     EXTENSIONES_VIDEO = {'mp4'}
     MAX_FOTOS = 3
-    MAX_FOTO_MB = 5   # Fotos máximo 5MB
-    MAX_VIDEO_MB = 50 # Videos máximo 50MB
-    CHUNK_SIZE = 64 * 1024  # 64KB por chunk
+    MAX_FOTO_MB = 5  
+    MAX_VIDEO_MB = 50 
+    CHUNK_SIZE = 64 * 1024 
 
     def _validar_id_review(self, idReview):
         if not idReview or '..' in idReview or '/' in idReview or '\\' in idReview:
             return False
         return bool(re.match(r'^[a-zA-Z0-9_-]+$', idReview))
 
-    # ========== FOTOS (COMPLETAS) ==========
     
     def SubirFoto(self, request, context):
         """Sube una foto completa (sin chunks)"""
@@ -26,7 +25,6 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
         extension = request.extension.lower()
         datos = request.datos
 
-        # Validaciones
         if not self._validar_id_review(idReview):
             context.abort(grpc.StatusCode.INVALID_ARGUMENT, "ID inválido")
 
@@ -39,7 +37,6 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
         if len(datos) > self.MAX_FOTO_MB * 1024 * 1024:
             context.abort(grpc.StatusCode.INVALID_ARGUMENT, f"Foto excede {self.MAX_FOTO_MB}MB")
 
-        # Guardar
         base = os.getenv("DIRECTORIO_MULTIMEDIA_RESENIAS")
         carpeta = os.path.join(base, idReview)
         os.makedirs(carpeta, exist_ok=True)
@@ -89,7 +86,6 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
             fotos=fotos
         )
 
-    # ========== VIDEOS (POR CHUNKS) ==========
     
     def SubirVideo(self, request_iterator, context):
         """Sube un video por chunks (streaming)"""
@@ -100,7 +96,6 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
 
         try:
             for chunk_request in request_iterator:
-                # Primera vez: crear archivo
                 if idReview is None:
                     idReview = chunk_request.idReview
                     extension = chunk_request.extension.lower()
@@ -118,11 +113,9 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
                     ruta = os.path.join(carpeta, f"video.{extension}")
                     archivo = open(ruta, "wb")
 
-                # Escribir chunk
                 archivo.write(chunk_request.chunk)
                 total_bytes += len(chunk_request.chunk)
 
-                # Validar tamaño
                 if total_bytes > self.MAX_VIDEO_MB * 1024 * 1024:
                     archivo.close()
                     os.remove(ruta)
@@ -155,7 +148,6 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
         base = os.getenv("DIRECTORIO_MULTIMEDIA_RESENIAS")
         carpeta = os.path.join(base, idReview)
 
-        # Buscar video
         ruta = None
         for ext in self.EXTENSIONES_VIDEO:
             temp = os.path.join(carpeta, f"video.{ext}")
@@ -187,7 +179,6 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
         except Exception as e:
             context.abort(grpc.StatusCode.INTERNAL, str(e))
 
-    # ========== OTROS ==========
     
     def ObtenerMetadata(self, request, context):
         """Obtiene metadata"""
@@ -237,7 +228,6 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
 
         archivos_eliminados = 0
 
-        # Eliminar fotos
         for i in range(1, self.MAX_FOTOS + 1):
             for ext in self.EXTENSIONES_FOTO:
                 ruta = os.path.join(carpeta, f"{i}.{ext}")
@@ -248,7 +238,6 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
                     except:
                         pass
 
-        # Eliminar video
         for ext in self.EXTENSIONES_VIDEO:
             ruta = os.path.join(carpeta, f"video.{ext}")
             if os.path.exists(ruta):
@@ -258,7 +247,6 @@ class MultimediaDeReseniaControlador(Multimedia_De_Resenia_pb2_grpc.ReviewMultim
                 except:
                     pass
 
-        # Eliminar carpeta
         try:
             if not os.listdir(carpeta):
                 os.rmdir(carpeta)
